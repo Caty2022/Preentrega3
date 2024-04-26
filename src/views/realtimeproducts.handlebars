@@ -1,24 +1,24 @@
 <h1>Real Time Products</h1>
-<h2>Products update in real time</h2>
+<h2>Productos actualizados en tiempo real</h2>
 
-<div id="containerProducts"></div>
+<div id="contenedorProductos"></div>
 
-<h2>Form from add products</h2>
+<h2>Formulario para agregar productos</h2>
 
 <form>
-    <input type="text", id="title", placeholder="Titulo">
-    <input type="text", id="description", placeholder="Descripcion">
-    <input type="number", id="price", placeholder="Precio">
-    <input type="text", id="img", placeholder="Sin Imagen">
-    <input type="text", id="code", placeholder="Codigo">
-    <input type="number", id="stock", placeholder="Stock">
-    <input type="text", id="category", placeholder="Categoria">
+    <input type="text" id="title" placeholder="Titulo">
+    <input type="text" id="description" placeholder="Descripcion">
+    <input type="number" id="price" placeholder="Precio">
+    <input type="text" id="img" value="Sin Imagen">
+    <input type="text" id="code" placeholder="Código">
+    <input type="number" id="stock" placeholder="Stock">
+    <input type="text" id="category" placeholder="Categoria">
     <select id="status">
-        <option value="true"> Active </option>
+        <option value="true"> Activo </option>
+        <option value="false"> Inactivo </option>
     </select>
-    <button type="button" id="btnSend"> Send </button>
-    
+    <button type="button" id="btnEnviar"> Enviar </button>
 </form>
 
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-<script src="js/index.js"></script>
+<script src="js/realtime.js"></script>
