@@ -1,7 +1,7 @@
 const ProductModel = require("../models/product.model.js");
 
 class ProductRepository {
-  async addProduct({
+  async agregarProducto({
     title,
     description,
     price,
@@ -13,14 +13,14 @@ class ProductRepository {
   }) {
     try {
       if (!title || !description || !price || !code || !stock || !category) {
-        console.log("All fields are required");
+        console.log("Todos los campos son obligatorios");
         return;
       }
 
-      const productExists = await ProductModel.findOne({ code: code });
+      const existeProducto = await ProductModel.findOne({ code: code });
 
-      if (productExists) {
-        console.log("The code is repeated, it must be unique");
+      if (existeProducto) {
+        console.log("El código debe ser único, malditooo!!!");
         return;
       }
 
@@ -37,18 +37,19 @@ class ProductRepository {
       });
 
       await newProduct.save();
+
       return newProduct;
     } catch (error) {
-      console.log("Error add product", error);
-      throw error;
+      throw new Error("Error");
     }
   }
 
-  async getProducts({ limit = 10, page = 1, sort, query } = {}) {
+  async obtenerProductos(limit = 10, page = 1, sort, query) {
     try {
       const skip = (page - 1) * limit;
 
       let queryOptions = {};
+
       if (query) {
         queryOptions = { category: query };
       }
@@ -60,7 +61,7 @@ class ProductRepository {
         }
       }
 
-      const products = await ProductModel.find(queryOptions)
+      const productos = await ProductModel.find(queryOptions)
         .sort(sortOptions)
         .skip(skip)
         .limit(limit);
@@ -68,14 +69,15 @@ class ProductRepository {
       const totalProducts = await ProductModel.countDocuments(queryOptions);
 
       const totalPages = Math.ceil(totalProducts / limit);
+
       const hasPrevPage = page > 1;
       const hasNextPage = page < totalPages;
 
       return {
-        docs: products,
+        docs: productos,
         totalPages,
-        prevPages: hasPrevPage ? page - 1 : null,
-        nextPages: hasNextPage ? page + 1 : null,
+        prevPage: hasPrevPage ? page - 1 : null,
+        nextPage: hasNextPage ? page + 1 : null,
         page,
         hasPrevPage,
         hasNextPage,
@@ -91,62 +93,57 @@ class ProductRepository {
           : null,
       };
     } catch (error) {
-      console.log("Error getting products", error);
-      throw error;
+      throw new Error("Error");
     }
   }
 
-  async getProductById(id) {
+  async obtenerProductoPorId(id) {
     try {
-      const product = await ProductModel.findById(id);
+      const producto = await ProductModel.findById(id);
 
-      if (product) {
-        console.error("Product found");
-        return product;
-      } else {
-        console.error("Product not found");
+      if (!producto) {
+        console.log("Producto no encontrado");
         return null;
       }
+
+      console.log("Producto encontrado!! Claro que siiiiii");
+      return producto;
     } catch (error) {
-      console.log("Error getting product by id", error);
-      throw error;
+      throw new Error("Error");
     }
   }
 
-  async updateProduct(id, productUpdate) {
+  async actualizarProducto(id, productoActualizado) {
     try {
-      const updateProduct = await ProductModel.findByIdAndUpdate(
+      const actualizado = await ProductModel.findByIdAndUpdate(
         id,
-        productUpdate
+        productoActualizado
       );
-
-      if (updateProduct) {
-        console.log("Product update successfully");
-        return updateProduct;
-      } else {
-        console.error("Product not found");
+      if (!actualizado) {
+        console.log("No se encuentra che el producto");
         return null;
       }
+
+      console.log("Producto actualizado con exito, como todo en mi vidaa!");
+      return actualizado;
     } catch (error) {
-      console.log("Error updating product by id", error);
-      throw error;
+      throw new Error("Error");
     }
   }
 
-  async deleteProduct(id) {
+  async eliminarProducto(id) {
     try {
-      const deleteProduct = await ProductModel.findByIdAndDelete(id);
+      const deleteado = await ProductModel.findByIdAndDelete(id);
 
-      if (deleteProduct) {
-        console.log("Product deleted");
-        return deleteProduct;
-      } else {
-        console.error("Product not found");
+      if (!deleteado) {
+        console.log("No se encuentraaaa, busca bien!");
         return null;
       }
+
+      console.log("Producto eliminado correctamente!");
+      return deleteado;
     } catch (error) {
-      console.log("Error deleting product by id", error);
-      throw error;
+      throw new Error("Error");
     }
   }
 }

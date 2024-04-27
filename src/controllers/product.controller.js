@@ -2,73 +2,67 @@ const ProductRepository = require("../repositories/product.repository.js");
 const productRepository = new ProductRepository();
 
 class ProductController {
-  async addProduct(request, response) {
-    const newProduct = request.body;
 
-    try {
-      await productRepository.addProduct(newProduct);
-      response.status(201).json({ message: "Product add successfully" });
-    } catch (error) {
-      console.log("Error add product", error);
-      response.status(500).json({ error: "Server error" });
+    async addProduct(req, res) {
+        const nuevoProducto = req.body;
+        try {
+            const resultado = await productRepository.agregarProducto(nuevoProducto);
+            res.json(resultado);
+
+        } catch (error) {
+            res.status(500).send("Error");
+        }
     }
-  }
 
-  async getProducts(request, response) {
-    try {
-      let { limit = 10, page = 1, sort, query } = request.query;
+    async getProducts(req, res) {
+        try {
+            let { limit = 10, page = 1, sort, query } = req.query;
 
-      const products = await productRepository.getProducts(
-        limit,
-        page,
-        sort,
-        query
-      );
-      response.json(products);
-    } catch (error) {
-      console.log("Error getting products", error);
-      response.status(500).json({ error: "Server error" });
+            const productos = await productRepository.obtenerProductos(limit, page, sort, query);
+           
+            res.json(productos);
+        } catch (error) { 
+            res.status(500).send("Error");
+        }
     }
-  }
 
-  async getProductById(request, response) {
-    const id = request.params.pid;
-    try {
-      const product = await productRepository.getProductById(id);
-
-      if (!product) {
-        return response.json({ error: "Product not found" });
-      }
-      response.json(product);
-    } catch (error) {
-      console.log("Error getting product", error);
-      response.status(500).json({ error: "Server error" });
+    async getProductById(req, res) {
+        const id = req.params.pid;
+        try {
+            const buscado = await productRepository.obtenerProductoPorId(id);
+            if (!buscado) {
+                return res.json({
+                    error: "Producto no encontrado"
+                });
+            }
+            res.json(buscado);
+        } catch (error) {
+            res.status(500).send("Error");
+        }
     }
-  }
 
-  async updateProduct(request, response) {
-    const id = request.params.pid;
-    const productUpdate = request.body;
-    try {
-      await productRepository.updateProduct(id, productUpdate);
-      response.json({ message: "Product update successfully" });
-    } catch (error) {
-      console.log("Error update product", error);
-      response.status(500).json({ error: "Server error" });
+    async updateProduct(req, res) {
+        try {
+            const id = req.params.pid;
+            const productoActualizado = req.body;
+
+            const resultado = await productRepository.actualizarProducto(id, productoActualizado);
+            res.json(resultado);
+        } catch (error) {
+            res.status(500).send("Error al actualizar el producto");
+        }
     }
-  }
 
-  async deleteProduct(request, response) {
-    const id = request.params.pid;
+    async deleteProduct(req, res) {
+        const id = req.params.pid;
+        try {
+            let respuesta = await productRepository.eliminarProducto(id);
 
-    try {
-      await productRepository.deleteProduct(id);
-      response.json({ message: "Product deleted successfully" });
-    } catch (error) {
-      console.log("Error deleted product", error);
-      response.status(500).json({ error: "Server error" });
+            res.json(respuesta);
+        } catch (error) {
+            res.status(500).send("Error al eliminar el producto");
+        }
     }
-  }
 }
 
-module.exports = ProductController;
+module.exports = ProductController; 

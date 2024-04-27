@@ -1,12 +1,7 @@
-<header>
-<h1 style="text-align: center;"> Productos </h1>
-</header>
+<main>
 <div class="miPerfil">
-<h2>Mi Perfil</h2>
-<p>Bienvenido {{user.first_name}} {{user.last_name}}!</p>
-<p>Email: {{user.email}}</p>
-<p>Edad: {{user.age}}</p>
-<a href="/api/sessions/logout">Logout</a>
+<h2>Productos</h2>
+<a href="/api/users/profile">Regresar a Perfil</a>
 </div>
 
 
@@ -15,7 +10,7 @@
         {{#each productos}}
             <div class="col-md-4">
                 <div class="card" style="width: 18rem;">
-                    <img src="" class="card-img-top" alt="Product Image">
+                    <img class="productImage" src="/img/{{img}}">
                     <div class="card-body">
                         <h5 class="card-title">{{title}}</h5>
                         <p class="card-text">{{description}}</p>
@@ -28,7 +23,6 @@
         {{/each}}
     </div>
 </div>
-
 <div class="paginacion">
 {{#if hasPrevPage}}
     <a class="btnPage" href="/products?page={{prevPage}}"> Anterior <a/>
@@ -38,3 +32,4 @@
     <a class="btnPage" href="/products?page={{nextPage}}"> Siguiente <a/>
 {{/if}} 
 </div>
+</main>

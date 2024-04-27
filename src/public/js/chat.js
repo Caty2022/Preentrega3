@@ -1,4 +1,7 @@
+//Creamos una instancia de socket.io del lado del cliente ahora:
 const socket = io();
+
+//Creamos una variable para guardar el usuario:
 let user;
 const chatBox = document.getElementById("chatBox");
 

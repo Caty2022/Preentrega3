@@ -1,22 +1,26 @@
 const express = require("express");
 const router = express.Router();
-const UserModel = require("../models/user.model.js");
-const { createHash } = require("../utils/hashbcryp.js");
 const passport = require("passport");
 const UserController = require("../controllers/user.controller.js");
+
 const userController = new UserController();
 
-router.post(
-  "/",
-  passport.authenticate("register", { failureRedirect: "/failedregister" }),
-  userController.register
+router.post("/register", userController.register);
+router.post("/login", userController.login);
+router.get(
+  "/profile",
+  passport.authenticate("jwt", { session: false }),
+  userController.profile
 );
-
-router.get("/failedregister", (request, response) => {
-  response.send({ error: "Failed register" });
-});
-
-router.get("/profile", userController.profile);
-router.get("/admin", userController.admin);
+router.post("/logout", userController.logout.bind(userController));
+// GitHub
+router.get("/auth/github", userController.githubAuth);
+router.get("/auth/github/callback", userController.githubAuthCallback);
+//Admin
+router.get(
+  "/admin",
+  passport.authenticate("jwt", { session: false }),
+  userController.admin
+);
 
 module.exports = router;

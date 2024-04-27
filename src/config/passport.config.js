@@ -1,60 +1,26 @@
 const passport = require("passport");
-const local = require("passport-local");
+const jwt = require("passport-jwt");
+const JWTStrategy = jwt.Strategy;
+const ExtractJwt = jwt.ExtractJwt;
 const GitHubStrategy = require("passport-github2");
 const UserModel = require("../models/user.model.js");
-const { createHash, isValidPassword } = require("../utils/hashbcryp.js");
-
-const LocalStrategy = local.Strategy;
 
 const initializePassport = () => {
-  //Register
   passport.use(
-    "register",
-    new LocalStrategy(
+    "jwt",
+    new JWTStrategy(
       {
-        passReqToCallback: true,
-        usernameField: "email",
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]), // Utiliza ExtractJwt.fromExtractors para extraer el token de la cookie
+        secretOrKey: "coderhouse",
       },
-      async (req, username, password, done) => {
-        const { first_name, last_name, email, age } = req.body;
+      async (jwt_payload, done) => {
         try {
-          let user = await UserModel.findOne({ email: email });
-          if (user) return done(null, false);
-
-          let newUser = {
-            first_name,
-            last_name,
-            email,
-            age,
-            password: createHash(password),
-          };
-
-          let result = await UserModel.create(newUser);
-
-          return done(null, result);
-        } catch (error) {
-          return done(error);
-        }
-      }
-    )
-  );
-
-  // Login
-  passport.use(
-    "login",
-    new LocalStrategy(
-      {
-        usernameField: "email",
-      },
-      async (email, password, done) => {
-        try {
-          const user = await UserModel.findOne({ email });
+          // Busca el usuario en la base de datos usando el ID del payload JWT
+          const user = await UserModel.findById(jwt_payload.user._id);
           if (!user) {
-            console.log("Este usuario no existeeeeeee ahhh");
             return done(null, false);
           }
-          if (!isValidPassword(password, user)) return done(null, false);
-          return done(null, user);
+          return done(null, user); // Devuelve el usuario encontrado
         } catch (error) {
           return done(error);
         }
@@ -62,13 +28,18 @@ const initializePassport = () => {
     )
   );
   passport.serializeUser((user, done) => {
-    done(null, user._id);
+    done(null, user.id);
   });
+
   passport.deserializeUser(async (id, done) => {
-    let user = await UserModel.findById({ _id: id });
-    done(null, user);
+    try {
+      const user = await UserModel.findById(id);
+      done(null, user);
+    } catch (error) {
+      done(error);
+    }
   });
-  //Github
+
   passport.use(
     "github",
     new GitHubStrategy(
@@ -78,12 +49,10 @@ const initializePassport = () => {
         callbackURL: "http://localhost:8080/api/sessions/githubcallback",
       },
       async (accessToken, refreshToken, profile, done) => {
-        //Opcional: si ustedes quieren ver como lllega el perfil del usuario:
-        // console.log(profile); //informacion de github del usuarfio que ingresa
+        console.log(profile); // Información de GitHub del usuario que ingresa
         try {
           let user = await UserModel.findOne({ email: profile._json.email });
           if (!user) {
-            //Si no encuentro ningun usuario con este email, lo voy a crear:
             let newUser = {
               first_name: profile._json.name,
               last_name: "secreto",
@@ -91,7 +60,6 @@ const initializePassport = () => {
               email: profile._json.email,
               password: "secreto",
             };
-            //Una vez que tengo el nuevo usuario, lo guardo en MongoDB
             let result = await UserModel.create(newUser);
             done(null, result);
           } else {
@@ -104,4 +72,13 @@ const initializePassport = () => {
     )
   );
 };
+
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies["coderCookieToken"];
+  }
+  return token;
+};
+
 module.exports = initializePassport;

@@ -1,0 +1,36 @@
+<style>
+/* HEADER */
+/* HEADER */
+
+
+main{
+   margin-top: 3.1rem;
+}
+header {
+  background-color: black;
+  margin-bottom: 1rem;
+  text-align: center;
+  width: 100%;
+}
+header h1 {
+  color: white;
+  font-size: 4rem;
+}
+</style>
+
+<main>
+  
+   <header>
+   <h1>Mi Perfil</h1>
+   </header>
+
+
+   <p>Bienvenido, {{user.nombre}} {{user.apellido}}!</p>
+   <p>Email: {{user.email}}</p>
+   <p>Rol: {{user.rol}}</p>
+
+   <form action="/api/users/logout" method="POST">
+      <button type="submit">Logout</button>
+   </form>
+   <a href="/products">Ir a productos</a>
+</main>
