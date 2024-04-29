@@ -99,7 +99,7 @@ header h1 {
   border: 1rem solid black;
 }
 .miPerfil h2 {
-  color: #45a049;
+  color:#007bff;
   font-size: 2rem;
 }
 .miPerfil p {
@@ -232,8 +232,3 @@ header h1 {
   background-color: #0056b3;
 }
 
-/*Footer*/
-
-.iconos-redes-sociales a {
-  margin-right: 10px; 
-}

@@ -23,6 +23,9 @@ class ViewsController {
         return { id: _id, ...rest }; // Agregar el ID al objeto
       });
 
+      const cartId = req.user.cart ? req.user.cart.toString() : null;
+      // console.log(cartId);
+
       res.render("products", {
         productos: nuevoArray,
         hasPrevPage,
@@ -31,6 +34,7 @@ class ViewsController {
         nextPage: page < totalPages ? parseInt(page) + 1 : null,
         currentPage: parseInt(page),
         totalPages,
+        cartId,
       });
     } catch (error) {
       console.error("Error al obtener productos", error);
@@ -98,7 +102,6 @@ class ViewsController {
   async renderChat(req, res) {
     res.render("chat");
   }
-
   async renderHome(req, res) {
     res.render("home");
   }

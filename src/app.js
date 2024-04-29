@@ -23,16 +23,14 @@ app.use(express.static("./src/public"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
+
 app.use(cookieParser());
 app.use(
   session({
     secret: "secretCoder",
     resave: true,
     saveUninitialized: true,
-    store: MongoStore.create({
-      mongoUrl:
-        "mongodb+srv://catalinakrenz3316:coderhouse@cluster0.0yui3l4.mongodb.net/Ecommerce?retryWrites=true&w=majority&appName=Cluster0",
-      ttl: 100,
+    store: MongoStore.create({mongoUrl:"mongodb+srv://catalinakrenz3316:coderhouse@cluster0.0yui3l4.mongodb.net/Ecommerce?retryWrites=true&w=majority&appName=Cluster0",ttl: 100,
     }),
   })
 );
@@ -56,6 +54,7 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/users", userRouter);
 app.use("/", viewsRouter);
+
 
 
 const httpServer = app.listen(PUERTO, () => {
