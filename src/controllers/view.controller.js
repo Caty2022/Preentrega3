@@ -105,6 +105,8 @@ class ViewsController {
   async renderHome(req, res) {
     res.render("home");
   }
+
+
 }
 
 module.exports = ViewsController;
